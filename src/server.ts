@@ -1,7 +1,7 @@
 import http from 'node:http';
 import { exec } from 'node:child_process';
 import express from 'express';
-import { PUBLIC_DIR, ROOT_DIR, config, hasSteamCredentials, isPackaged } from './config.js';
+import { ENV_PATH, PUBLIC_DIR, ROOT_DIR, config, hasSteamCredentials, isPackaged } from './config.js';
 import { lookupPrices } from './csfloat.js';
 import { applyMissingBuyPrices, addPurchase, markPriceSync, setBuyPrice, syncInventory } from './portfolio.js';
 import { buildSnapshot } from './snapshot.js';
@@ -242,7 +242,7 @@ export function startServer(): http.Server {
       console.log('Keep this window open while you use the tracker.');
     }
     if (!hasSteamCredentials()) {
-      console.log('Steam login is not set yet. Edit .env, then restart.');
+      console.log(`Steam login is not set yet. Edit ${ENV_PATH}, then restart.`);
     }
     openBrowser(url);
   });

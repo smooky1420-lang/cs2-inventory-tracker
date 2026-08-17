@@ -1,6 +1,5 @@
 import chalk from 'chalk';
-import path from 'node:path';
-import { config, ensureDataDir, hasSteamCredentials, isPackaged, USER_DIR } from './config.js';
+import { ENV_PATH, config, hasSteamCredentials, isPackaged } from './config.js';
 import { lookupPrices } from './csfloat.js';
 import { printReport } from './display.js';
 import { loadPortfolio, savePortfolio, setBuyPrice, syncInventory } from './portfolio.js';
@@ -75,17 +74,16 @@ async function main(): Promise<void> {
     printHelp();
     return;
   }
-  ensureDataDir();
   if (isPackaged()) {
     console.log(`CS2 Inventory Tracker`);
-    console.log(`Settings: ${path.join(USER_DIR, '.env')}`);
+    console.log(`Settings: ${ENV_PATH}`);
   }
   if (wantsCli) {
     await runCli();
     return;
   }
   if (!hasSteamCredentials()) {
-    console.log('\nAdd STEAM_ACCOUNT_NAME and STEAM_PASSWORD to .env before Sync Steam.\n');
+    console.log(`\nAdd STEAM_ACCOUNT_NAME and STEAM_PASSWORD to ${ENV_PATH} before Sync Steam.\n`);
   }
   startServer();
 }

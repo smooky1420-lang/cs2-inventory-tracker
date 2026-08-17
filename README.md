@@ -4,15 +4,15 @@ Local web app that logs into Steam, reads CS2 inventory from the Game Coordinato
 
 ## Download the Windows app
 
-If you just want to run it:
+1. Grab `CS2InventoryTracker-windows.zip` from [Releases](../../releases).
+2. Unzip it. You should get a folder with:
+   - `CS2InventoryTracker.exe`
+   - `config.env`
+   - `README.txt`
+3. Open `config.env` in Notepad and add your Steam username and password (keep the quotes if the password contains `#`).
+4. Double-click the exe. Keep the console window open. It opens [http://localhost:3000](http://localhost:3000).
 
-1. Grab `CS2InventoryTracker.exe` from [Releases](../../releases).
-2. Put it in its own folder.
-3. Run it once. It creates a `.env` file next to the exe.
-4. Edit `.env` with your Steam username and password (wrap the password in double quotes if it contains `#`).
-5. Run the exe again. It opens [http://localhost:3000](http://localhost:3000). Keep the console window open.
-
-Your inventory, buy prices, and price history are saved in a `data` folder next to the exe.
+After the first Steam sync, a `data` folder appears next to the exe (inventory, prices, and Steam login cache).
 
 Windows may warn that the app is unsigned. Choose **More info** → **Run anyway**.
 
@@ -58,7 +58,7 @@ npm install
 npm run pack:win
 ```
 
-The file lands at `release/CS2InventoryTracker.exe`. GitHub Actions also builds it when you publish a Release.
+The zip lands at `release/CS2InventoryTracker-windows.zip`. GitHub Actions also builds it when you publish a Release.
 
 Prices come from CSFloat's bulk price index, then a short parallel lookup only for items missing from that index.
 

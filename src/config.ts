@@ -27,7 +27,17 @@ export const PORTFOLIO_PATH = path.join(DATA_DIR, 'portfolio.json');
 export const PRICE_CACHE_PATH = path.join(DATA_DIR, 'price-cache.json');
 export const HISTORY_PATH = path.join(DATA_DIR, 'history.json');
 export const REFRESH_TOKEN_PATH = path.join(DATA_DIR, 'refresh.token');
-export const ENV_PATH = path.join(USER_DIR, '.env');
+
+function resolveEnvPath(): string {
+  if (!isPackaged()) return path.join(USER_DIR, '.env');
+  const visible = path.join(USER_DIR, 'config.env');
+  const hidden = path.join(USER_DIR, '.env');
+  if (fs.existsSync(visible)) return visible;
+  if (fs.existsSync(hidden)) return hidden;
+  return visible;
+}
+
+export const ENV_PATH = resolveEnvPath();
 
 function ensureEnvFile(): void {
   if (fs.existsSync(ENV_PATH)) return;
@@ -52,6 +62,10 @@ export const MAIN_INVENTORY_LABEL = 'Main Inventory';
 
 export function ensureDataDir(): void {
   fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+export function ensureSteamDataDir(): void {
+  ensureDataDir();
   fs.mkdirSync(STEAM_DATA_DIR, { recursive: true });
 }
 

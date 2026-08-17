@@ -5,11 +5,12 @@ import NodeCS2 from 'node-cs2';
 import SteamTotp from 'steam-totp';
 import {
   CS2_APP_ID,
+  ENV_PATH,
   MAIN_INVENTORY_LABEL,
   REFRESH_TOKEN_PATH,
   STEAM_DATA_DIR,
   config,
-  ensureDataDir,
+  ensureSteamDataDir,
 } from './config.js';
 import { aggregateLots, filterTrackableLots, isStorageUnit, isTrackableItem, itemId, storageUnitLabel, toLot } from './items.js';
 import { prompt, sleep } from './utils.js';
@@ -57,7 +58,7 @@ function loadRefreshToken(): string | null {
 }
 
 function saveRefreshToken(token: string): void {
-  ensureDataDir();
+  ensureSteamDataDir();
   fs.writeFileSync(REFRESH_TOKEN_PATH, token, 'utf8');
 }
 
@@ -204,7 +205,7 @@ function loginError(err: Error & { eresult?: number }): Error {
   const name = err.message || '';
   if (name.includes('InvalidPassword') || err.eresult === 5) {
     return new Error(
-      'Steam rejected the password (InvalidPassword). If the password is correct, wrap it in double quotes in .env — characters like # start a comment unless quoted. Example: STEAM_PASSWORD="p@ss#word"',
+      `Steam rejected the password (InvalidPassword). If the password is correct, wrap it in double quotes in ${ENV_PATH} — characters like # start a comment unless quoted. Example: STEAM_PASSWORD="p@ss#word"`,
     );
   }
   return err;
@@ -212,7 +213,7 @@ function loginError(err: Error & { eresult?: number }): Error {
 
 function logOnWithCredentials(client: SteamUserInstance, progress: (message: string) => void): void {
   if (!config.steamAccountName || !config.steamPassword) {
-    throw new Error('Set STEAM_ACCOUNT_NAME and STEAM_PASSWORD in .env, or use --offline with a previous sync.');
+    throw new Error(`Set STEAM_ACCOUNT_NAME and STEAM_PASSWORD in ${ENV_PATH}, or use --offline with a previous sync.`);
   }
   progress(`Logging into Steam as ${config.steamAccountName}...`);
   client.logOn({
@@ -236,10 +237,10 @@ export async function fetchSteamInventory(options: SteamFetchOptions = {}): Prom
 
   const existingToken = loadRefreshToken();
   if (!existingToken && (!config.steamAccountName || !config.steamPassword)) {
-    throw new Error('Set STEAM_ACCOUNT_NAME and STEAM_PASSWORD in .env, or use --offline with a previous sync.');
+    throw new Error(`Set STEAM_ACCOUNT_NAME and STEAM_PASSWORD in ${ENV_PATH}, or use --offline with a previous sync.`);
   }
 
-  ensureDataDir();
+  ensureSteamDataDir();
 
   const client = new SteamUser({
     dataDirectory: STEAM_DATA_DIR,
