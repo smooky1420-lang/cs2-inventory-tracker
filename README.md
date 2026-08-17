@@ -21,7 +21,7 @@ Windows may warn that the app is unsigned. Choose **More info** → **Run anyway
 For changes, or if you already have Node.js 18+:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/smooky1420-lang/cs2-inventory-tracker.git
 cd "CS2 Portfolio Tracker"
 npm install
 copy .env.example .env
