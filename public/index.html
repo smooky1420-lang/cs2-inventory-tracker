@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CS2 Inventory Tracker</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="dashboard">
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <p class="eyebrow">Counter-Strike 2</p>
+          <h1>Inventory Tracker</h1>
+          <nav class="nav" aria-label="Pages">
+            <a href="#/dashboard" data-page="dashboard">Dashboard</a>
+            <a href="#/inventory" data-page="inventory">Inventory</a>
+          </nav>
+        </div>
+        <div class="topbar-meta" id="sync-meta"></div>
+        <div class="actions">
+          <button type="button" id="btn-sync" class="btn btn-primary">Sync Steam</button>
+          <button type="button" id="btn-prices" class="btn">Refresh Prices</button>
+          <button type="button" id="btn-fill-buy" class="btn page-only" data-for="inventory">CSFloat → empty buy prices</button>
+          <button type="button" id="btn-csv" class="btn page-only" data-for="inventory">Export CSV</button>
+        </div>
+      </header>
+
+      <div id="banner" class="banner hidden"></div>
+
+      <section id="page-dashboard" class="page page-dashboard">
+        <section class="cards" id="cards"></section>
+
+        <section class="insights">
+          <article class="panel chart-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Value over time</h2>
+                <p class="muted">A snapshot is saved whenever prices refresh.</p>
+              </div>
+              <div class="chart-legend">
+                <span><i class="swatch gold"></i> Net worth</span>
+                <span><i class="swatch muted"></i> Market value</span>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="value-chart" aria-label="Inventory value over time"></canvas>
+              <p id="chart-empty" class="chart-empty hidden">Refresh prices once to start a history.</p>
+            </div>
+          </article>
+        </section>
+
+        <section class="insights-grid">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>By type</h2>
+                <p class="muted">Click a type to open it in Inventory.</p>
+              </div>
+            </div>
+            <div id="by-type" class="break-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>By storage unit</h2>
+                <p class="muted">Click a unit to open it in Inventory.</p>
+              </div>
+            </div>
+            <div id="by-location" class="break-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Unpriced</h2>
+                <p class="muted">Items still missing a CSFloat price.</p>
+              </div>
+              <span id="unpriced-count" class="muted"></span>
+            </div>
+            <div id="unpriced" class="break-list"></div>
+          </article>
+        </section>
+      </section>
+
+      <section id="page-inventory" class="page page-inventory">
+        <div class="inventory-strip" id="inventory-strip"></div>
+        <section class="panel inventory-panel">
+          <div class="toolbar">
+            <input id="search" type="search" placeholder="Search items, types, units…" />
+            <select id="type"></select>
+            <select id="location"></select>
+            <select id="view">
+              <option value="items">Group by item</option>
+              <option value="lots">Group by location</option>
+            </select>
+            <label class="check"><input id="hide-unpriced" type="checkbox" /> Hide unpriced</label>
+            <label class="check"><input id="only-unpriced" type="checkbox" /> Unpriced only</label>
+            <label class="check"><input id="hide-zero" type="checkbox" /> Hide $0 cost</label>
+          </div>
+          <div class="table-wrap">
+            <table id="holdings">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <div id="buy-modal" class="modal hidden">
+      <div class="modal-card">
+        <h2>Add purchase</h2>
+        <p id="buy-modal-item"></p>
+        <p id="buy-modal-current" class="muted"></p>
+        <form id="buy-form">
+          <label>
+            Quantity bought
+            <input id="buy-qty" type="number" min="1" step="1" required />
+          </label>
+          <label>
+            Price each (USD)
+            <input id="buy-price" type="number" min="0" step="0.01" required />
+          </label>
+          <label class="check">
+            <input id="buy-already" type="checkbox" checked />
+            These copies are already in my Steam inventory
+          </label>
+          <p id="buy-preview" class="buy-preview"></p>
+          <div class="modal-actions">
+            <button type="button" id="buy-cancel" class="btn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Average in</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="guard-modal" class="modal hidden">
+      <div class="modal-card">
+        <h2>Steam Guard</h2>
+        <p id="guard-copy">Enter the code from your authenticator.</p>
+        <form id="guard-form">
+          <input id="guard-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" />
+          <button type="submit" class="btn btn-primary">Submit code</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
